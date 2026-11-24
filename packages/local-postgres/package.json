@@ -12,7 +12,7 @@
   "dependencies": {
     "@agentic/contracts": "workspace:*",
     "pg": "8.23.1",
-    "zod": "4.6.6"
+    "zod": "4.6.7"
   },
   "optionalDependencies": {
     "@embedded-postgres/darwin-arm64": "18.4.0-beta.17",

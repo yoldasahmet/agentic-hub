@@ -13,13 +13,13 @@
     "@agentic/contracts": "workspace:*",
     "@agentic/logger": "workspace:*",
     "@agentic/db": "workspace:*",
-    "@langchain/core": "1.2.17",
-    "@langchain/langgraph": "1.4.21",
-    "@langchain/langgraph-checkpoint": "1.1.6",
-    "@langchain/langgraph-checkpoint-postgres": "1.0.6",
+    "@langchain/core": "1.4.1",
+    "@langchain/langgraph": "1.7.5",
+    "@langchain/langgraph-checkpoint": "1.2.3",
+    "@langchain/langgraph-checkpoint-postgres": "1.1.4",
     "drizzle-orm": "0.45.4",
     "pg": "8.23.1",
-    "zod": "4.6.6"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@agentic/config": "workspace:*",
@@ -27,6 +27,6 @@
     "@types/node": "22.20.5",
     "@types/pg": "8.23.1",
     "typescript": "6.0.3",
-    "vitest": "5.0.3"
+    "vitest": "5.1.0"
   }
 }

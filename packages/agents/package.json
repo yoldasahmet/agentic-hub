@@ -14,9 +14,9 @@
     "@agentic/graph": "workspace:*",
     "@agentic/llm": "workspace:*",
     "@agentic/tools": "workspace:*",
-    "@langchain/core": "1.2.17",
-    "@langchain/langgraph": "1.4.21",
-    "zod": "4.6.6"
+    "@langchain/core": "1.4.1",
+    "@langchain/langgraph": "1.7.5",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@agentic/config": "workspace:*",
