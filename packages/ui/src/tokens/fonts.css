@@ -1,0 +1,4 @@
+/* Self-hosted fonts: the app never fetches fonts from the network. */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/source-serif-4";
+@import "@fontsource-variable/jetbrains-mono";

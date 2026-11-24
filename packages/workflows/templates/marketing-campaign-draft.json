@@ -1,0 +1,160 @@
+{
+  "format": "agentic.workflow",
+  "formatVersion": 1,
+  "workflow": {
+    "slug": "marketing-campaign-draft",
+    "name": "Marketing Campaign Draft",
+    "description": "Turn a brief, audience, and channel into a campaign plan, edited copy, and review notes.",
+    "color": "plum",
+    "icon": "sparkles",
+    "document": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "brief": {
+            "x-ui-type": "long",
+            "description": "Campaign goal, offer, brand voice, constraints, and approved facts",
+            "type": "string"
+          },
+          "audience": {
+            "x-ui-type": "text",
+            "description": "Who the campaign should reach",
+            "type": "string"
+          },
+          "channel": {
+            "x-ui-type": "text",
+            "description": "Target channel, such as email or LinkedIn",
+            "type": "string"
+          }
+        },
+        "required": ["brief", "audience", "channel"],
+        "additionalProperties": false,
+        "x-ui-order": ["brief", "audience", "channel"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "campaignPlan": {
+            "x-ui-type": "long",
+            "description": "Messaging angle, supporting points, and call to action",
+            "type": "string"
+          },
+          "reviewedCopy": {
+            "x-ui-type": "long",
+            "description": "Edited, channel-ready copy for a human to approve",
+            "type": "string"
+          },
+          "reviewNotes": {
+            "x-ui-type": "long",
+            "description": "Editorial changes and claims or details to verify",
+            "type": "string"
+          }
+        },
+        "required": ["campaignPlan", "reviewedCopy", "reviewNotes"],
+        "additionalProperties": false,
+        "x-ui-order": ["campaignPlan", "reviewedCopy", "reviewNotes"]
+      },
+      "outputs": {
+        "campaignPlan": {
+          "kind": "node",
+          "node": "plan",
+          "field": "campaignPlan"
+        },
+        "reviewedCopy": {
+          "kind": "node",
+          "node": "edit",
+          "field": "reviewedCopy"
+        },
+        "reviewNotes": {
+          "kind": "node",
+          "node": "edit",
+          "field": "reviewNotes"
+        }
+      },
+      "nodes": [
+        {
+          "id": "plan",
+          "kind": "agent",
+          "agent": "marketing-strategist",
+          "label": "Plan campaign",
+          "bindings": {
+            "brief": {
+              "kind": "input",
+              "field": "brief"
+            },
+            "audience": {
+              "kind": "input",
+              "field": "audience"
+            },
+            "channel": {
+              "kind": "input",
+              "field": "channel"
+            }
+          }
+        },
+        {
+          "id": "draft",
+          "kind": "agent",
+          "agent": "marketing-copywriter",
+          "label": "Write copy",
+          "bindings": {
+            "brief": {
+              "kind": "input",
+              "field": "brief"
+            },
+            "audience": {
+              "kind": "input",
+              "field": "audience"
+            },
+            "channel": {
+              "kind": "input",
+              "field": "channel"
+            },
+            "campaignPlan": {
+              "kind": "node",
+              "node": "plan",
+              "field": "campaignPlan"
+            }
+          }
+        },
+        {
+          "id": "edit",
+          "kind": "agent",
+          "agent": "marketing-editor",
+          "label": "Edit copy",
+          "bindings": {
+            "brief": {
+              "kind": "input",
+              "field": "brief"
+            },
+            "audience": {
+              "kind": "input",
+              "field": "audience"
+            },
+            "channel": {
+              "kind": "input",
+              "field": "channel"
+            },
+            "draftCopy": {
+              "kind": "node",
+              "node": "draft",
+              "field": "draftCopy"
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "plan-to-draft",
+          "from": "plan",
+          "to": "draft"
+        },
+        {
+          "id": "draft-to-edit",
+          "from": "draft",
+          "to": "edit"
+        }
+      ]
+    }
+  }
+}

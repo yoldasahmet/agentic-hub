@@ -1,0 +1,92 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "jira-triager",
+    "name": "Jira Triager",
+    "description": "Classifies a new ticket: type, priority, labels, and component.",
+    "color": "blue",
+    "icon": "ticket",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "text",
+            "description": "The ticket summary",
+            "type": "string"
+          },
+          "description": {
+            "x-ui-type": "long",
+            "description": "The ticket description",
+            "type": "string"
+          }
+        },
+        "required": ["summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "description"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "issueType": {
+            "x-ui-type": "select",
+            "description": "The kind of work",
+            "type": "string",
+            "enum": ["Bug", "Story", "Task", "Spike"]
+          },
+          "priority": {
+            "x-ui-type": "select",
+            "description": "How urgent it is",
+            "type": "string",
+            "enum": ["Lowest", "Low", "Medium", "High", "Highest"]
+          },
+          "labels": {
+            "x-ui-type": "multi",
+            "description": "Short labels",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "component": {
+            "x-ui-type": "text",
+            "description": "The most likely component",
+            "type": "string"
+          },
+          "rationale": {
+            "x-ui-type": "long",
+            "description": "Why, in two or three sentences",
+            "type": "string"
+          }
+        },
+        "required": ["issueType", "priority", "rationale"],
+        "additionalProperties": false,
+        "x-ui-order": ["issueType", "priority", "labels", "component", "rationale"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "You triage incoming tickets. Classify the ticket from its summary and description. Be conservative with High and Highest: use them only for outages, data loss, or security issues.",
+        "template": "Summary: {{input.summary}}\n\n{{input.description}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": []
+      }
+    }
+  }
+}

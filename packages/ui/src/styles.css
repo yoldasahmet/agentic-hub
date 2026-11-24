@@ -1,0 +1,12 @@
+/*
+ * Design-system entry. An app imports Tailwind first, then this file, and
+ * adds `@source` for packages/ui so Tailwind sees the component classes.
+ */
+@import "./tokens/fonts.css";
+@import "./tokens/neutrals.css";
+@import "./tokens/status.css";
+@import "./tokens/identity.css";
+@import "./tokens/theme.css";
+@import "./tokens/base.css";
+/* React Flow's own layout rules; the canvas restyles colors with tokens. */
+@import "@xyflow/react/dist/style.css";

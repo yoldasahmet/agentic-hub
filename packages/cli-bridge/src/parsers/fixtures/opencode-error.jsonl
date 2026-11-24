@@ -1,0 +1,2 @@
+{"type":"error","error":{"name":"ProviderAuthError","data":{"message":"No API key for anthropic"}}}
+{"type":"error","error":{"name":"UnknownError"}}

@@ -1,0 +1,44 @@
+{
+  "name": "@agentic/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./paths": "./src/runtime/paths.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "start": "tsx src/bin/node.ts"
+  },
+  "dependencies": {
+    "@agentic/agents": "workspace:*",
+    "@agentic/chat": "workspace:*",
+    "@agentic/cli-bridge": "workspace:*",
+    "@agentic/contracts": "workspace:*",
+    "@agentic/logger": "workspace:*",
+    "@agentic/db": "workspace:*",
+    "@agentic/graph": "workspace:*",
+    "@agentic/integrations": "workspace:*",
+    "@agentic/llm": "workspace:*",
+    "@agentic/tools": "workspace:*",
+    "@agentic/workflows": "workspace:*",
+    "@hono/node-server": "2.1.6",
+    "@hono/zod-validator": "0.9.1",
+    "cron-parser": "5.10.1",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.16",
+    "ws": "8.22.0",
+    "yaml": "2.9.1",
+    "zod": "4.6.6"
+  },
+  "devDependencies": {
+    "@agentic/config": "workspace:*",
+    "@agentic/testing": "workspace:*",
+    "@types/node": "22.20.5",
+    "@types/ws": "8.18.2",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3"
+  }
+}

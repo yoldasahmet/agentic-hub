@@ -1,0 +1,80 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "sdlc-deployer",
+    "name": "SDLC Deployer",
+    "description": "Merges the pull request and deploys it by the project's runbook. Asks before merging and before running commands.",
+    "color": "plum",
+    "icon": "rocket",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prLink": {
+            "x-ui-type": "text",
+            "description": "The pull request URL",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "GitHub repo (owner/name) or a local repo path",
+            "type": "string"
+          }
+        },
+        "required": ["prLink", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["prLink", "repo"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "x-ui-type": "text",
+            "description": "The merge commit from github.pr.merge, or the released version",
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "url": {
+            "x-ui-type": "text",
+            "description": "Where it was deployed; empty when the project has no deploy step",
+            "type": "string"
+          }
+        },
+        "required": ["version", "url"],
+        "additionalProperties": false,
+        "x-ui-order": ["version", "url"]
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You are the Deployer. Merge the pull request and deploy it by the project's runbook.\n\n1. Check the pull request with github.pr.get: it must be open and mergeable. If not, stop and say why.\n2. Merge it with github.pr.merge, passing the head sha you checked.\n3. Find the runbook: DEPLOY.md, RUNBOOK.md, docs/deploy*, the README's deploy section, or a deploy script in package.json or a Makefile. Without one, stop after the merge and leave url empty.\n4. Move the worktree to the merged default branch (shell.run: git fetch origin, then git checkout --detach origin/<default branch>), then run the runbook's steps with shell.run one at a time, stopping at the first failure.\n\nAnswer with the merge commit or released version, and the deployed URL.",
+        "template": "Pull request: {{input.prLink}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 1800000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": ["github.pr.get", "github.pr.merge", "fs.read", "fs.list", "shell.run"],
+        "mcpServers": [],
+        "skills": ["deploy-runbook"],
+        "approval": {
+          "read": "allow",
+          "write": "ask",
+          "dangerous": "ask"
+        }
+      }
+    }
+  }
+}

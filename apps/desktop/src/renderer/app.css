@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "@agentic/ui/styles.css";
+
+/* Tailwind scans the shared components as well as the renderer. */
+@source "../../../../packages/ui/src";
+
+@layer utilities {
+  /* Lets the frameless title bar move the window. Controls opt out. */
+  .app-drag {
+    -webkit-app-region: drag;
+  }
+  .app-no-drag {
+    -webkit-app-region: no-drag;
+  }
+}

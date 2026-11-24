@@ -1,0 +1,81 @@
+# Packaging for the macOS app (P18). `pnpm --filter @agentic/desktop package`
+# builds with electron-vite, then this. Signing and notarization turn on
+# when their environment variables are set (docs/release.md); without
+# them the build is unsigned.
+appId: org.agentichub.desktop
+productName: Agentic Hub
+copyright: Copyright © 2026 Agentic Hub contributors
+
+directories:
+  output: release
+  buildResources: build
+
+# electron-vite bundles main, preload, Core, and the renderer into out/.
+# node_modules only carries the externals in package.json `dependencies`.
+files:
+  - out/**/*
+  - package.json
+asar: true
+# node-pty's native addon and its spawn-helper run from outside the archive.
+asarUnpack:
+  - "**/node_modules/node-pty/**"
+# node-pty ships N-API prebuilds for both Mac archs, so nothing is rebuilt
+# (a cross-arch rebuild on one runner is the fragile part of packaging).
+npmRebuild: false
+
+extraResources:
+  - from: ../../LICENSE
+    to: LICENSE-agentic.txt
+  # The `agentic` CLI bundle and its migrations (P18.7, apps/cli `bundle`).
+  - from: ../cli/dist
+    to: cli
+
+# docs/security.md → Electron fuses. Core is a utilityProcess, so RunAsNode
+# isn't needed; the CLI runs on the user's Node instead.
+electronFuses:
+  runAsNode: false
+  enableCookieEncryption: true
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  enableEmbeddedAsarIntegrityValidation: true
+  onlyLoadAppFromAsar: true
+  # The renderer loads from file://; Vite's module scripts need these privileges.
+  grantFileProtocolExtraPrivileges: true
+
+mac:
+  category: public.app-category.developer-tools
+  # The zip (what electron-updater downloads); the dmg overrides it below.
+  artifactName: ${productName}-${version}-${arch}-mac.${ext}
+  icon: build/icon.png
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  extraResources:
+    # P18.2: Postgres for the arch being built (initdb, pg_ctl, postgres,
+    # lib, share). pnpm hoists @embedded-postgres/* to the root node_modules.
+    - from: ../../node_modules/@embedded-postgres/darwin-${arch}/native
+      to: postgres
+      filter: ["**/*", "!**/*.a", "!include/**", "!pg-symlinks.json"]
+
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+# Not a release target ("Not now" in ROADMAP.md). Used only by the packaging
+# smoke check on Linux (scripts/check-package.mjs) with `--linux dir`.
+linux:
+  target: dir
+  executableName: agentic-hub
+  extraResources:
+    - from: ../../node_modules/@embedded-postgres/linux-${arch}/native
+      to: postgres
+      filter: ["**/*", "!**/*.a", "!include/**", "!pg-symlinks.json"]
+
+# The release workflow configures the feed for the repository running it.
+# Local builds have no feed and do not infer one from a Git remote.
+publish: null

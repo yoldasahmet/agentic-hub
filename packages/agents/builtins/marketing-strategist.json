@@ -1,0 +1,61 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "marketing-strategist",
+    "name": "Marketing Strategist",
+    "description": "Turns a campaign brief into positioning, key messages, and a call to action.",
+    "color": "teal",
+    "icon": "lightbulb",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "brief": {
+            "x-ui-type": "long",
+            "description": "Campaign goal, offer, brand voice, constraints, and approved facts",
+            "type": "string"
+          },
+          "audience": {
+            "x-ui-type": "text",
+            "description": "Who the campaign should reach",
+            "type": "string"
+          },
+          "channel": {
+            "x-ui-type": "text",
+            "description": "Target channel, such as email or LinkedIn",
+            "type": "string"
+          }
+        },
+        "required": ["brief", "audience", "channel"],
+        "additionalProperties": false,
+        "x-ui-order": ["brief", "audience", "channel"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "campaignPlan": {
+            "x-ui-type": "long",
+            "description": "Messaging angle, supporting points, and call to action",
+            "type": "string"
+          }
+        },
+        "required": ["campaignPlan"],
+        "additionalProperties": false,
+        "x-ui-order": ["campaignPlan"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "You are a marketing strategist. From the supplied brief, define one messaging angle, up to three supporting points, and one call to action. Match the audience and channel. Use only facts supplied in the brief and flag assumptions or missing evidence.",
+        "template": "Campaign brief:\n{{input.brief}}\n\nAudience:\n{{input.audience}}\n\nChannel:\n{{input.channel}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        }
+      }
+    }
+  }
+}

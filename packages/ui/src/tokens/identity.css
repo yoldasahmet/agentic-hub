@@ -1,0 +1,96 @@
+/*
+ * Identity palette. Components set `data-hue="<name>"` and use the
+ * `hue-solid` / `hue-tint` / `hue-ink` utilities, so class names stay static.
+ */
+:root {
+  --id-terracotta: #c96442;
+  --id-terracotta-tint: #f6e4db;
+  --id-terracotta-ink: #8a3b22;
+  --id-amber: #a8741a;
+  --id-amber-tint: #f6ebcf;
+  --id-amber-ink: #6e4a0e;
+  --id-olive: #76842b;
+  --id-olive-tint: #ecefd4;
+  --id-olive-ink: #4a5319;
+  --id-green: #3f8a57;
+  --id-green-tint: #ddeedf;
+  --id-green-ink: #24573a;
+  --id-teal: #2e8a86;
+  --id-teal-tint: #d7eeec;
+  --id-teal-ink: #1b5754;
+  --id-blue: #3d78b8;
+  --id-blue-tint: #dce7f4;
+  --id-blue-ink: #234c7a;
+  --id-indigo: #5b63b7;
+  --id-indigo-tint: #e2e3f5;
+  --id-indigo-ink: #383e86;
+  --id-violet: #8657b0;
+  --id-violet-tint: #ece1f4;
+  --id-violet-ink: #5a3680;
+  --id-plum: #a84e86;
+  --id-plum-tint: #f3dfea;
+  --id-plum-ink: #73305a;
+  --id-slate: #66707a;
+  --id-slate-tint: #e4e7ea;
+  --id-slate-ink: #3e454c;
+}
+
+[data-hue="terracotta"] {
+  --hue-solid: var(--id-terracotta);
+  --hue-tint: var(--id-terracotta-tint);
+  --hue-ink: var(--id-terracotta-ink);
+}
+
+[data-hue="amber"] {
+  --hue-solid: var(--id-amber);
+  --hue-tint: var(--id-amber-tint);
+  --hue-ink: var(--id-amber-ink);
+}
+
+[data-hue="olive"] {
+  --hue-solid: var(--id-olive);
+  --hue-tint: var(--id-olive-tint);
+  --hue-ink: var(--id-olive-ink);
+}
+
+[data-hue="green"] {
+  --hue-solid: var(--id-green);
+  --hue-tint: var(--id-green-tint);
+  --hue-ink: var(--id-green-ink);
+}
+
+[data-hue="teal"] {
+  --hue-solid: var(--id-teal);
+  --hue-tint: var(--id-teal-tint);
+  --hue-ink: var(--id-teal-ink);
+}
+
+[data-hue="blue"] {
+  --hue-solid: var(--id-blue);
+  --hue-tint: var(--id-blue-tint);
+  --hue-ink: var(--id-blue-ink);
+}
+
+[data-hue="indigo"] {
+  --hue-solid: var(--id-indigo);
+  --hue-tint: var(--id-indigo-tint);
+  --hue-ink: var(--id-indigo-ink);
+}
+
+[data-hue="violet"] {
+  --hue-solid: var(--id-violet);
+  --hue-tint: var(--id-violet-tint);
+  --hue-ink: var(--id-violet-ink);
+}
+
+[data-hue="plum"] {
+  --hue-solid: var(--id-plum);
+  --hue-tint: var(--id-plum-tint);
+  --hue-ink: var(--id-plum-ink);
+}
+
+[data-hue="slate"] {
+  --hue-solid: var(--id-slate);
+  --hue-tint: var(--id-slate-tint);
+  --hue-ink: var(--id-slate-ink);
+}

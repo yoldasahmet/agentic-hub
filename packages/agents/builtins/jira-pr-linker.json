@@ -1,0 +1,79 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "jira-pr-linker",
+    "name": "Jira PR Linker",
+    "description": "Links a pull request on its Jira issue (asks first).",
+    "color": "blue",
+    "icon": "ticket",
+    "spec": {
+      "kind": "tool",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "x-ui-type": "text",
+            "description": "The Jira issue key, e.g. ABC-123",
+            "type": "string"
+          },
+          "url": {
+            "x-ui-type": "text",
+            "description": "The pull request URL",
+            "type": "string"
+          },
+          "title": {
+            "x-ui-type": "text",
+            "description": "The link's title on the issue",
+            "type": "string"
+          }
+        },
+        "required": ["key", "url", "title"],
+        "additionalProperties": false,
+        "x-ui-order": ["key", "url", "title"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-ui-type": "number",
+            "description": "The link's id on the issue",
+            "type": "number"
+          },
+          "url": {
+            "x-ui-type": "text",
+            "description": "The linked URL",
+            "type": "string"
+          }
+        },
+        "required": ["id", "url"],
+        "additionalProperties": true,
+        "x-ui-order": ["id", "url"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "",
+        "template": ""
+      },
+      "runtime": {
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 60000,
+        "maxRepairs": 0,
+        "tool": "jira.link"
+      },
+      "capabilities": {
+        "tools": ["jira.link"],
+        "mcpServers": [],
+        "skills": [],
+        "approval": {
+          "read": "allow",
+          "write": "ask",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

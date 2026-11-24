@@ -1,0 +1,4 @@
+{
+  "extends": "@agentic/config/tsconfig.node.json",
+  "include": ["src", "templates"]
+}

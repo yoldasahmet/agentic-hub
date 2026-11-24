@@ -1,0 +1,12 @@
+{"type":"thread.started","thread_id":"0199"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"reasoning","text":"**Planning** the change"}}
+{"type":"item.started","item":{"id":"item_1","type":"command_execution","command":"bash -lc ls","aggregated_output":"","exit_code":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"command_execution","command":"bash -lc ls","aggregated_output":"README.md\n","exit_code":0,"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_2","type":"command_execution","command":"false","aggregated_output":"","exit_code":1,"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_3","type":"file_change","changes":[{"path":"a.ts","kind":"update"}],"status":"completed"}}
+{"type":"item.started","item":{"id":"item_4","type":"mcp_tool_call","server":"github","tool":"get_issue","arguments":{"n":1},"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_4","type":"mcp_tool_call","server":"github","tool":"get_issue","arguments":{"n":1},"result":null,"error":{"message":"not found"},"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_5","type":"todo_list","items":[]}}
+{"type":"item.completed","item":{"id":"item_6","type":"agent_message","text":"Done."}}
+{"type":"turn.completed","usage":{"input_tokens":1500,"cached_input_tokens":1000,"output_tokens":80}}

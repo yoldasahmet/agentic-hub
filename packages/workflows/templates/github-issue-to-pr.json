@@ -1,0 +1,162 @@
+{
+  "format": "agentic.workflow",
+  "formatVersion": 1,
+  "workflow": {
+    "slug": "github-issue-to-pr",
+    "name": "GitHub issue to PR",
+    "description": "Implement a GitHub issue in a worktree of its own, commit it, and open a pull request after you approve it.",
+    "color": "indigo",
+    "icon": "git-pull-request",
+    "document": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "issue": {
+            "x-ui-type": "long",
+            "description": "The GitHub issue (a GitHub trigger fills this)",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "owner/name of the repository",
+            "type": "string"
+          }
+        },
+        "required": ["issue", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["issue", "repo"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "long",
+            "description": "What changed",
+            "type": "string"
+          },
+          "pullRequest": {
+            "x-ui-type": "text",
+            "description": "The opened pull request",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "pullRequest"]
+      },
+      "outputs": {
+        "summary": {
+          "kind": "node",
+          "node": "code",
+          "field": "summary"
+        },
+        "pullRequest": {
+          "kind": "node",
+          "node": "open_pr",
+          "field": "url"
+        }
+      },
+      "nodes": [
+        {
+          "id": "code",
+          "kind": "agent",
+          "agent": "issue-coder",
+          "label": "Implement",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "issue": {
+              "kind": "input",
+              "field": "issue"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            }
+          }
+        },
+        {
+          "id": "commit",
+          "kind": "agent",
+          "agent": "git-committer",
+          "label": "Commit",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "message": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  {
+                    "var": "nodes.code.output.title"
+                  },
+                  "\n\n",
+                  {
+                    "var": "nodes.code.output.summary"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "open_pr",
+          "kind": "agent",
+          "agent": "pr-opener",
+          "label": "Open PR",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "title": {
+              "kind": "node",
+              "node": "code",
+              "field": "title"
+            },
+            "body": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  {
+                    "var": "nodes.code.output.summary"
+                  },
+                  "\n\n---\n",
+                  {
+                    "var": "input.issue"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "code",
+          "to": "commit",
+          "label": ""
+        },
+        {
+          "id": "e2",
+          "from": "commit",
+          "to": "open_pr",
+          "label": ""
+        }
+      ]
+    }
+  }
+}

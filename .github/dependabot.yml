@@ -1,0 +1,32 @@
+# Update policy (docs/security.md, P15.4): weekly grouped PRs for npm and
+# GitHub Actions; security updates open as soon as an advisory lands.
+# Every PR runs CI (lint, types, tests, audit) before anyone merges it.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    # Gives a release a week to be pulled if it was hijacked (pnpm's
+    # minimumReleaseAge enforces the same locally).
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Majors of the runtime and framework move with a roadmap step, not a bot PR.
+      - dependency-name: electron
+        update-types: [version-update:semver-major]
+      - dependency-name: "@langchain/*"
+        update-types: [version-update:semver-major]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]

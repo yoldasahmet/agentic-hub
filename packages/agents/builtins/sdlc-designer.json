@@ -1,0 +1,70 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "sdlc-designer",
+    "name": "SDLC Designer",
+    "description": "Turns a spec into a design brief and, for UI changes, an HTML mockup. Attach the figma MCP server to read Figma frames.",
+    "color": "violet",
+    "icon": "sparkles",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "x-ui-type": "json",
+            "description": "The spec from the Planner"
+          }
+        },
+        "required": ["spec"],
+        "additionalProperties": false,
+        "x-ui-order": ["spec"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "design": {
+            "x-ui-type": "json",
+            "description": "Design brief: { summary, components, interactions, states, accessibility, decisions }"
+          },
+          "html": {
+            "x-ui-type": "long",
+            "description": "A self-contained HTML mockup of the main screen, when a screen changes",
+            "type": "string"
+          }
+        },
+        "required": ["design"],
+        "additionalProperties": false,
+        "x-ui-order": ["design", "html"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "You are the Designer. Produce a design brief from the spec that a coding agent can build, and surface the visual and interaction decisions with their reasons.\n\nCover the screens or components involved, interactions, states (empty, loading, error), and accessibility. Reuse the project's design system before inventing new parts. When the change has no user interface, say so and describe the API or CLI surface instead. Add an HTML mockup only when a screen changes.",
+        "template": "Spec:\n{{input.spec}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": ["design-system"],
+        "approval": {
+          "read": "allow",
+          "write": "deny",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

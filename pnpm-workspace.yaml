@@ -1,0 +1,36 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 10 blocks install scripts by default. esbuild (used by Vite) needs
+# its native binary. Electron downloads its binary on first launch instead.
+# The Postgres binary packages restore their library symlinks on install.
+# node-pty builds its native PTY helper (N-API, so Node and Electron share it).
+onlyBuiltDependencies:
+  - esbuild
+  - node-pty
+  - "@embedded-postgres/darwin-arm64"
+  - "@embedded-postgres/darwin-x64"
+  - "@embedded-postgres/linux-x64"
+
+# Electron main bundles packages/local-postgres, so the platform binary
+# package it imports at runtime must resolve from apps/desktop/out too.
+publicHoistPattern:
+  - "@embedded-postgres/*"
+
+# Supply-chain guard (P15.4): pnpm won't resolve a version published less
+# than 7 days ago, so a hijacked release is usually caught before we pull it.
+minimumReleaseAge: 10080
+
+# electron-builder's newest transitive releases are younger than the 7-day
+# window above; pin the previous ones until they age in.
+overrides:
+  "@electron/rebuild": 4.2.0
+  node-abi: 4.35.0
+
+  # Patched transitive releases for the production dependency audit.
+  "undici@8.11.2": 8.12.2
+  "body-parser@2.3.0": 2.4.0
+  "fast-uri@3.1.8": 3.1.9
+  "ip-address@10.7.3": 10.7.4
+  "qs@6.16.0": 6.16.1

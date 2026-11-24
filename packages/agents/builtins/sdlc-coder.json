@@ -1,0 +1,107 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "sdlc-coder",
+    "name": "SDLC Coder",
+    "description": "Implements the plan in the run's worktree, then opens a pull request (or pushes fixes to it). Asks before writing.",
+    "color": "teal",
+    "icon": "code",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "x-ui-type": "long",
+            "description": "What to build or fix",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "GitHub repo (owner/name) or a local repo path",
+            "type": "string"
+          },
+          "plan": {
+            "x-ui-type": "json",
+            "description": "Ordered steps from the Planner, followed first when present"
+          },
+          "design": {
+            "x-ui-type": "json",
+            "description": "Design brief from the Designer"
+          },
+          "feedback": {
+            "x-ui-type": "long",
+            "description": "Review blockers or failing tests to fix on a later pass",
+            "type": "string"
+          },
+          "prLink": {
+            "x-ui-type": "text",
+            "description": "The pull request to update on a later pass",
+            "type": "string"
+          }
+        },
+        "required": ["task", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["task", "repo", "plan", "design", "feedback", "prLink"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "prLink": {
+            "x-ui-type": "text",
+            "description": "URL of the pull request returned by the PR tool",
+            "pattern": "^https?://[^/]+/[^/]+/[^/]+/pull/[1-9][0-9]*/?$",
+            "type": "string"
+          },
+          "summary": {
+            "x-ui-type": "long",
+            "description": "What changed and why",
+            "type": "string"
+          }
+        },
+        "required": ["prLink", "summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["prLink", "summary"]
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You are the Coder. You implement a change end to end in the run's git worktree and open a pull request.\n\nFollow the plan when one is given, and the design brief for anything user-facing; otherwise build the task as described. Make the smallest correct change and do not widen scope. Read code with fs.read, fs.list, and git.log; write files with fs.write.\n\nWhen feedback is given, this is a later pass: fix exactly what it reports.\n\nWhen done, check the change with git.diff and commit it with git.commit. Then:\n- without a prLink, open a pull request with github.pr.create (it pushes the branch);\n- with a prLink, push with github.push; the pull request updates itself.\n\nAnswer with the pull request URL as prLink and a short summary of what changed and why.",
+        "template": "Task:\n{{input.task}}\n\nPlan:\n{{input.plan}}\n\nDesign:\n{{input.design}}\n\nFeedback to fix:\n{{input.feedback}}\n\nExisting pull request: {{input.prLink}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 1800000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [
+          "fs.read",
+          "fs.list",
+          "fs.write",
+          "git.status",
+          "git.diff",
+          "git.log",
+          "git.commit",
+          "github.push",
+          "github.pr.create"
+        ],
+        "mcpServers": [],
+        "skills": ["code-style"],
+        "approval": {
+          "read": "allow",
+          "write": "ask",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

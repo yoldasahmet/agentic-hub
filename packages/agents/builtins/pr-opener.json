@@ -1,0 +1,85 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "pr-opener",
+    "name": "PR Opener",
+    "description": "Pushes the run's worktree branch and opens a pull request on GitHub (asks first).",
+    "color": "indigo",
+    "icon": "git-pull-request",
+    "spec": {
+      "kind": "tool",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "repo": {
+            "x-ui-type": "text",
+            "description": "owner/name on GitHub, or a local repo path",
+            "type": "string"
+          },
+          "title": {
+            "x-ui-type": "text",
+            "description": "Pull request title",
+            "type": "string"
+          },
+          "body": {
+            "x-ui-type": "long",
+            "description": "Pull request description",
+            "type": "string"
+          },
+          "draft": {
+            "x-ui-type": "bool",
+            "description": "Open as a draft",
+            "type": "boolean"
+          }
+        },
+        "required": ["repo", "title"],
+        "additionalProperties": false,
+        "x-ui-order": ["repo", "title", "body", "draft"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "x-ui-type": "number",
+            "description": "The pull request number",
+            "type": "number"
+          },
+          "url": {
+            "x-ui-type": "text",
+            "description": "The pull request on GitHub",
+            "type": "string"
+          }
+        },
+        "required": ["number", "url"],
+        "additionalProperties": true,
+        "x-ui-order": ["number", "url"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "",
+        "template": ""
+      },
+      "runtime": {
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 300000,
+        "maxRepairs": 2,
+        "tool": "github.pr.create"
+      },
+      "capabilities": {
+        "tools": ["github.pr.create"],
+        "mcpServers": [],
+        "skills": [],
+        "approval": {
+          "read": "allow",
+          "write": "ask",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

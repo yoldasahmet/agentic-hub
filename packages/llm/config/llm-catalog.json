@@ -1,0 +1,122 @@
+{
+  "$comment": "Models offered per provider. Hand-edit to add or remove models; OpenRouter's full list is synced from its API in Settings → Providers. \"default\" lets the CLI use its own configured model. Prices are USD per million tokens; leave them out when the provider reports cost itself or the price is unknown.",
+  "providers": [
+    {
+      "id": "claude-code",
+      "reasoningOptions": ["low", "medium", "high"],
+      "models": [
+        { "modelId": "default", "label": "CLI default", "isDefault": true },
+        {
+          "modelId": "sonnet",
+          "label": "Sonnet (latest)",
+          "tier": "balanced",
+          "contextWindow": 200000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "opus",
+          "label": "Opus (latest)",
+          "tier": "deep",
+          "contextWindow": 200000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "haiku",
+          "label": "Haiku (latest)",
+          "tier": "fast",
+          "contextWindow": 200000,
+          "supportsReasoning": true
+        }
+      ]
+    },
+    {
+      "id": "codex",
+      "reasoningOptions": ["low", "medium", "high"],
+      "models": [
+        { "modelId": "default", "label": "CLI default", "isDefault": true },
+        {
+          "modelId": "gpt-6-luna",
+          "label": "GPT-6 Luna",
+          "tier": "fast",
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gpt-5.6-sol",
+          "label": "GPT-5.6-Sol",
+          "tier": "deep",
+          "contextWindow": 272000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gpt-5.6-terra",
+          "label": "GPT-5.6-Terra",
+          "tier": "balanced",
+          "contextWindow": 272000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gpt-5.6-luna",
+          "label": "GPT-5.6-Luna",
+          "tier": "fast",
+          "contextWindow": 272000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gpt-5.5",
+          "label": "GPT-5.5",
+          "tier": "deep",
+          "contextWindow": 256000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gpt-5.4",
+          "label": "GPT-5.4",
+          "tier": "balanced",
+          "contextWindow": 256000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gpt-5.4-mini",
+          "label": "GPT-5.4 mini",
+          "tier": "fast",
+          "contextWindow": 128000
+        }
+      ]
+    },
+    {
+      "id": "gemini",
+      "models": [
+        { "modelId": "default", "label": "CLI default", "isDefault": true },
+        {
+          "modelId": "gemini-3.1-pro",
+          "label": "Gemini 3.1 Pro",
+          "tier": "deep",
+          "contextWindow": 2000000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gemini-3-flash-preview",
+          "label": "Gemini 3 Flash (preview)",
+          "tier": "balanced",
+          "contextWindow": 1000000,
+          "supportsReasoning": true
+        },
+        {
+          "modelId": "gemini-3.1-flash-lite-preview",
+          "label": "Gemini 3.1 Flash Lite (preview)",
+          "tier": "fast",
+          "contextWindow": 1000000
+        }
+      ]
+    },
+    {
+      "id": "opencode",
+      "models": [{ "modelId": "default", "label": "CLI default", "isDefault": true }]
+    },
+    {
+      "id": "openrouter",
+      "reasoningOptions": ["low", "medium", "high"],
+      "models": [{ "modelId": "openrouter/auto", "label": "Auto router", "isDefault": true }]
+    }
+  ]
+}

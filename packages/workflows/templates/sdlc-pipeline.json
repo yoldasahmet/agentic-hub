@@ -1,0 +1,334 @@
+{
+  "format": "agentic.workflow",
+  "formatVersion": 1,
+  "workflow": {
+    "slug": "sdlc-pipeline",
+    "name": "SDLC pipeline",
+    "description": "Plan → design → code and open a PR → review and test, looping back to the coder on blockers or failing tests → merge and deploy.",
+    "color": "indigo",
+    "icon": "workflow",
+    "document": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "x-ui-type": "long",
+            "description": "What to build or fix",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "GitHub repo (owner/name) or a local repo path; the run works in its own worktree",
+            "type": "string"
+          },
+          "context": {
+            "x-ui-type": "long",
+            "description": "Background: links, constraints, related code",
+            "type": "string"
+          }
+        },
+        "required": ["task", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["task", "repo", "context"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "prUrl": {
+            "x-ui-type": "text",
+            "description": "The pull request",
+            "type": "string"
+          },
+          "deployedUrl": {
+            "x-ui-type": "text",
+            "description": "Where the change was deployed",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "x-ui-order": ["prUrl", "deployedUrl"]
+      },
+      "outputs": {
+        "prUrl": {
+          "kind": "node",
+          "node": "code",
+          "field": "prLink"
+        },
+        "deployedUrl": {
+          "kind": "node",
+          "node": "deploy",
+          "field": "url"
+        }
+      },
+      "nodes": [
+        {
+          "id": "plan",
+          "kind": "agent",
+          "agent": "sdlc-planner",
+          "label": "Plan",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "task": {
+              "kind": "input",
+              "field": "task"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "context": {
+              "kind": "input",
+              "field": "context"
+            }
+          }
+        },
+        {
+          "id": "design",
+          "kind": "agent",
+          "agent": "sdlc-designer",
+          "label": "Design",
+          "position": {
+            "x": 350,
+            "y": 0
+          },
+          "bindings": {
+            "spec": {
+              "kind": "node",
+              "node": "plan",
+              "field": "spec"
+            }
+          }
+        },
+        {
+          "id": "code",
+          "kind": "agent",
+          "agent": "sdlc-coder",
+          "label": "Code",
+          "position": {
+            "x": 0,
+            "y": 140
+          },
+          "bindings": {
+            "task": {
+              "kind": "input",
+              "field": "task"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "plan": {
+              "kind": "node",
+              "node": "plan",
+              "field": "tasks"
+            },
+            "design": {
+              "kind": "node",
+              "node": "design",
+              "field": "design"
+            },
+            "feedback": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  {
+                    "if": [
+                      {
+                        "var": "nodes.review.output.blocking"
+                      },
+                      {
+                        "cat": [
+                          "Review blockers:\n",
+                          {
+                            "var": "nodes.review.output.summary"
+                          },
+                          "\n\n"
+                        ]
+                      },
+                      ""
+                    ]
+                  },
+                  {
+                    "if": [
+                      {
+                        "==": [
+                          {
+                            "var": "nodes.test.output.passed"
+                          },
+                          false
+                        ]
+                      },
+                      {
+                        "cat": [
+                          "Failing tests:\n",
+                          {
+                            "var": "nodes.test.output.summary"
+                          }
+                        ]
+                      },
+                      ""
+                    ]
+                  }
+                ]
+              }
+            },
+            "prLink": {
+              "kind": "expression",
+              "logic": {
+                "var": "nodes.code.output.prLink"
+              }
+            }
+          }
+        },
+        {
+          "id": "review",
+          "kind": "agent",
+          "agent": "sdlc-reviewer",
+          "label": "Review",
+          "position": {
+            "x": 350,
+            "y": 190
+          },
+          "bindings": {
+            "prLink": {
+              "kind": "node",
+              "node": "code",
+              "field": "prLink"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "context": {
+              "kind": "input",
+              "field": "task"
+            }
+          }
+        },
+        {
+          "id": "test",
+          "kind": "agent",
+          "agent": "sdlc-tester",
+          "label": "Test",
+          "position": {
+            "x": 0,
+            "y": 320
+          },
+          "bindings": {
+            "prLink": {
+              "kind": "node",
+              "node": "code",
+              "field": "prLink"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            }
+          }
+        },
+        {
+          "id": "deploy",
+          "kind": "agent",
+          "agent": "sdlc-deployer",
+          "label": "Deploy",
+          "position": {
+            "x": 350,
+            "y": 360
+          },
+          "bindings": {
+            "prLink": {
+              "kind": "node",
+              "node": "code",
+              "field": "prLink"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "plan",
+          "to": "design",
+          "label": ""
+        },
+        {
+          "id": "e2",
+          "from": "design",
+          "to": "code",
+          "label": ""
+        },
+        {
+          "id": "e3",
+          "from": "code",
+          "to": "review",
+          "label": ""
+        },
+        {
+          "id": "e4",
+          "from": "review",
+          "to": "test",
+          "label": "no blockers",
+          "condition": {
+            "!": [
+              {
+                "var": "nodes.review.output.blocking"
+              }
+            ]
+          }
+        },
+        {
+          "id": "e5",
+          "from": "review",
+          "to": "code",
+          "label": "blocking review",
+          "condition": {
+            "var": "nodes.review.output.blocking"
+          },
+          "maxIterations": 3
+        },
+        {
+          "id": "e6",
+          "from": "test",
+          "to": "deploy",
+          "label": "tests passed",
+          "condition": {
+            "var": "nodes.test.output.passed"
+          }
+        },
+        {
+          "id": "e7",
+          "from": "test",
+          "to": "code",
+          "label": "tests failed",
+          "condition": {
+            "!": [
+              {
+                "var": "nodes.test.output.passed"
+              }
+            ]
+          },
+          "maxIterations": 3
+        }
+      ]
+    }
+  },
+  "mcpServers": [
+    {
+      "name": "figma",
+      "config": {
+        "transport": "http",
+        "url": "http://127.0.0.1:3845/mcp",
+        "headers": {},
+        "secretHeaders": {}
+      }
+    }
+  ]
+}

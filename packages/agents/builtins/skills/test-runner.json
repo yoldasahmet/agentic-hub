@@ -1,0 +1,5 @@
+{
+  "slug": "test-runner",
+  "name": "Test runner",
+  "content": "# Test runner\n\nUse this when running a project's tests and reporting the result.\n\n## Find the commands\n\n1. Look for the documented commands: README, CONTRIBUTING.md, AGENTS.md, CI workflows (.github/workflows).\n2. Otherwise read the manifest: package.json scripts, Makefile, pyproject.toml, go.mod, Cargo.toml.\n3. Install dependencies with the lockfile (npm ci, pnpm install --frozen-lockfile, pip install -r …) only when they are missing.\n\n## Run\n\n- Run the narrowest set that covers the change first (the changed package or test file), then the wider suite if it is fast.\n- Run non-interactively: set CI=true, avoid watch modes, and run the project command directly. Agentic applies a timeout to shell.run.\n- Capture the exit code and the failing tests' names and output.\n\n## Report\n\n- Passed only when every test you ran passed.\n- For each failure: the test name, the assertion or error, and the most relevant lines of output.\n- Note anything you could not run (missing service, credential, or tool) and why. Never report skipped tests as passed."
+}

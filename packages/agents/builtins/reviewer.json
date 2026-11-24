@@ -1,0 +1,77 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "reviewer",
+    "name": "Reviewer",
+    "description": "Reviews a diff for correctness, clarity, and risk, with a clear verdict.",
+    "color": "indigo",
+    "icon": "search",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "diff": {
+            "x-ui-type": "long",
+            "description": "The unified diff to review",
+            "type": "string"
+          },
+          "context": {
+            "x-ui-type": "long",
+            "description": "What the change is for",
+            "type": "string"
+          }
+        },
+        "required": ["diff"],
+        "additionalProperties": false,
+        "x-ui-order": ["diff", "context"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "verdict": {
+            "x-ui-type": "select",
+            "description": "The overall call",
+            "type": "string",
+            "enum": ["approve", "request_changes", "comment"]
+          },
+          "summary": {
+            "x-ui-type": "long",
+            "description": "The review in a few paragraphs (markdown)",
+            "type": "string"
+          },
+          "comments": {
+            "x-ui-type": "json",
+            "description": "Line comments: [{ file, line, body }]"
+          }
+        },
+        "required": ["verdict", "summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["verdict", "summary", "comments"]
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You are a senior code reviewer. Look for bugs first, then unclear code, missing tests, and risky changes. Be specific and kind. Only request changes for real problems.",
+        "template": "Context:\n{{input.context}}\n\nDiff:\n{{input.diff}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": []
+      }
+    }
+  }
+}

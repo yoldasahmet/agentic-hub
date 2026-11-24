@@ -1,0 +1,232 @@
+{
+  "format": "agentic.workflow",
+  "formatVersion": 1,
+  "workflow": {
+    "slug": "jira-issue-to-pr",
+    "name": "Jira issue to PR",
+    "description": "Implement a Jira issue in a worktree of its own, commit it, open a pull request after you approve it, and link the PR back on the issue.",
+    "color": "blue",
+    "icon": "ticket",
+    "document": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "issue": {
+            "x-ui-type": "long",
+            "description": "The Jira issue (a Jira trigger fills this)",
+            "type": "string"
+          },
+          "key": {
+            "x-ui-type": "text",
+            "description": "The issue key, e.g. ABC-123 (a Jira trigger fills this)",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "owner/name of the repository",
+            "type": "string"
+          }
+        },
+        "required": ["issue", "key", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["issue", "key", "repo"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "long",
+            "description": "What changed",
+            "type": "string"
+          },
+          "pullRequest": {
+            "x-ui-type": "text",
+            "description": "The opened pull request",
+            "type": "string"
+          },
+          "link": {
+            "x-ui-type": "number",
+            "description": "The link's id on the Jira issue",
+            "type": "number"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "pullRequest", "link"]
+      },
+      "outputs": {
+        "summary": {
+          "kind": "node",
+          "node": "code",
+          "field": "summary"
+        },
+        "pullRequest": {
+          "kind": "node",
+          "node": "open_pr",
+          "field": "url"
+        },
+        "link": {
+          "kind": "node",
+          "node": "link_jira",
+          "field": "id"
+        }
+      },
+      "nodes": [
+        {
+          "id": "code",
+          "kind": "agent",
+          "agent": "issue-coder",
+          "label": "Implement",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "issue": {
+              "kind": "input",
+              "field": "issue"
+            },
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            }
+          }
+        },
+        {
+          "id": "commit",
+          "kind": "agent",
+          "agent": "git-committer",
+          "label": "Commit",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "message": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  {
+                    "var": "input.key"
+                  },
+                  ": ",
+                  {
+                    "var": "nodes.code.output.title"
+                  },
+                  "\n\n",
+                  {
+                    "var": "nodes.code.output.summary"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "open_pr",
+          "kind": "agent",
+          "agent": "pr-opener",
+          "label": "Open PR",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "repo": {
+              "kind": "input",
+              "field": "repo"
+            },
+            "title": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  {
+                    "var": "input.key"
+                  },
+                  ": ",
+                  {
+                    "var": "nodes.code.output.title"
+                  }
+                ]
+              }
+            },
+            "body": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  {
+                    "var": "nodes.code.output.summary"
+                  },
+                  "\n\n---\n",
+                  {
+                    "var": "input.issue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "link_jira",
+          "kind": "agent",
+          "agent": "jira-pr-linker",
+          "label": "Link on Jira",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "key": {
+              "kind": "input",
+              "field": "key"
+            },
+            "url": {
+              "kind": "node",
+              "node": "open_pr",
+              "field": "url"
+            },
+            "title": {
+              "kind": "expression",
+              "logic": {
+                "cat": [
+                  "Pull request: ",
+                  {
+                    "var": "input.key"
+                  },
+                  ": ",
+                  {
+                    "var": "nodes.code.output.title"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "code",
+          "to": "commit",
+          "label": ""
+        },
+        {
+          "id": "e2",
+          "from": "commit",
+          "to": "open_pr",
+          "label": ""
+        },
+        {
+          "id": "e3",
+          "from": "open_pr",
+          "to": "link_jira",
+          "label": ""
+        }
+      ]
+    }
+  }
+}

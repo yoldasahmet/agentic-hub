@@ -1,0 +1,28 @@
+{
+  "name": "@agentic/local-postgres",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agentic/contracts": "workspace:*",
+    "pg": "8.23.1",
+    "zod": "4.6.6"
+  },
+  "optionalDependencies": {
+    "@embedded-postgres/darwin-arm64": "18.4.0-beta.17",
+    "@embedded-postgres/darwin-x64": "18.4.0-beta.17",
+    "@embedded-postgres/linux-x64": "18.4.0-beta.17"
+  },
+  "devDependencies": {
+    "@agentic/config": "workspace:*",
+    "@types/node": "22.20.5",
+    "@types/pg": "8.23.1",
+    "typescript": "6.0.3"
+  }
+}

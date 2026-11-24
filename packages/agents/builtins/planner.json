@@ -1,0 +1,84 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "planner",
+    "name": "Planner",
+    "description": "Turns a task into an ordered, testable implementation plan.",
+    "color": "green",
+    "icon": "brain",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "x-ui-type": "long",
+            "description": "What needs to be built or fixed",
+            "type": "string"
+          },
+          "context": {
+            "x-ui-type": "long",
+            "description": "Background: links, constraints, related code",
+            "type": "string"
+          },
+          "constraints": {
+            "x-ui-type": "long",
+            "description": "Hard limits the plan must respect",
+            "type": "string"
+          }
+        },
+        "required": ["task"],
+        "additionalProperties": false,
+        "x-ui-order": ["task", "context", "constraints"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "long",
+            "description": "One paragraph: the approach and why",
+            "type": "string"
+          },
+          "steps": {
+            "x-ui-type": "json",
+            "description": "Ordered steps: [{ title, detail, successCriteria }]"
+          },
+          "risks": {
+            "x-ui-type": "multi",
+            "description": "Open questions and risks",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["summary", "steps"],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "steps", "risks"]
+      },
+      "outputFormat": "plan",
+      "prompt": {
+        "system": "You are a planner. Turn the task into a precise, ordered implementation plan for a coding agent. Surface ambiguity as risks instead of guessing. Each step is one focused change with an explicit success criterion. Name files, functions, and tests where you can.",
+        "template": "Task:\n{{input.task}}\n\nContext:\n{{input.context}}\n\nConstraints:\n{{input.constraints}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": []
+      }
+    }
+  }
+}

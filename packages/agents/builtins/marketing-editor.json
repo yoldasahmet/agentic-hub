@@ -1,0 +1,71 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "marketing-editor",
+    "name": "Marketing Editor",
+    "description": "Edits campaign copy for clarity, brand voice, and factual support.",
+    "color": "amber",
+    "icon": "list-checks",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "brief": {
+            "x-ui-type": "long",
+            "description": "Campaign goal, offer, brand voice, constraints, and approved facts",
+            "type": "string"
+          },
+          "audience": {
+            "x-ui-type": "text",
+            "description": "Who the campaign should reach",
+            "type": "string"
+          },
+          "channel": {
+            "x-ui-type": "text",
+            "description": "Target channel, such as email or LinkedIn",
+            "type": "string"
+          },
+          "draftCopy": {
+            "x-ui-type": "long",
+            "description": "Draft copy ready for editorial review",
+            "type": "string"
+          }
+        },
+        "required": ["brief", "audience", "channel", "draftCopy"],
+        "additionalProperties": false,
+        "x-ui-order": ["brief", "audience", "channel", "draftCopy"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "reviewedCopy": {
+            "x-ui-type": "long",
+            "description": "Edited, channel-ready copy for a human to approve",
+            "type": "string"
+          },
+          "reviewNotes": {
+            "x-ui-type": "long",
+            "description": "Editorial changes and claims or details to verify",
+            "type": "string"
+          }
+        },
+        "required": ["reviewedCopy", "reviewNotes"],
+        "additionalProperties": false,
+        "x-ui-order": ["reviewedCopy", "reviewNotes"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "You are a marketing editor. Return the full revised copy and short review notes. Check audience fit, brand voice, clarity, call to action, and channel conventions. Remove unsupported claims or replace them with clear placeholders. Flag facts or placeholders that need human confirmation.",
+        "template": "Campaign brief:\n{{input.brief}}\n\nAudience:\n{{input.audience}}\n\nChannel:\n{{input.channel}}\n\nDraft copy:\n{{input.draftCopy}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "marketing-copywriter",
+    "name": "Marketing Copywriter",
+    "description": "Writes campaign copy and a call to action tailored to the chosen channel.",
+    "color": "violet",
+    "icon": "file-text",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "brief": {
+            "x-ui-type": "long",
+            "description": "Campaign goal, offer, brand voice, constraints, and approved facts",
+            "type": "string"
+          },
+          "audience": {
+            "x-ui-type": "text",
+            "description": "Who the campaign should reach",
+            "type": "string"
+          },
+          "channel": {
+            "x-ui-type": "text",
+            "description": "Target channel, such as email or LinkedIn",
+            "type": "string"
+          },
+          "campaignPlan": {
+            "x-ui-type": "long",
+            "description": "Messaging angle, supporting points, and call to action",
+            "type": "string"
+          }
+        },
+        "required": ["brief", "audience", "channel", "campaignPlan"],
+        "additionalProperties": false,
+        "x-ui-order": ["brief", "audience", "channel", "campaignPlan"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "draftCopy": {
+            "x-ui-type": "long",
+            "description": "Draft copy ready for editorial review",
+            "type": "string"
+          }
+        },
+        "required": ["draftCopy"],
+        "additionalProperties": false,
+        "x-ui-order": ["draftCopy"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "You are a marketing copywriter. Write one complete, concise draft for the chosen channel using the campaign plan and brand voice. Include the call to action and channel-specific elements such as an email subject when relevant. Use only facts supplied in the brief. Mark missing facts with clear placeholders.",
+        "template": "Campaign brief:\n{{input.brief}}\n\nAudience:\n{{input.audience}}\n\nChannel:\n{{input.channel}}\n\nCampaign plan:\n{{input.campaignPlan}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        }
+      }
+    }
+  }
+}

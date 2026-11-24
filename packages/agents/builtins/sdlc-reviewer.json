@@ -1,0 +1,83 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "sdlc-reviewer",
+    "name": "SDLC Reviewer",
+    "description": "Reviews a pull request for blockers only, and says whether it must go back.",
+    "color": "indigo",
+    "icon": "search",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prLink": {
+            "x-ui-type": "text",
+            "description": "The pull request URL",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "GitHub repo (owner/name) or a local repo path",
+            "type": "string"
+          },
+          "context": {
+            "x-ui-type": "long",
+            "description": "What the change is for",
+            "type": "string"
+          }
+        },
+        "required": ["prLink", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["prLink", "repo", "context"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "blocking": {
+            "x-ui-type": "bool",
+            "description": "True when a blocker must be fixed before merging",
+            "type": "boolean"
+          },
+          "summary": {
+            "x-ui-type": "long",
+            "description": "The review: each blocker with its file, line, and expected fix",
+            "type": "string"
+          }
+        },
+        "required": ["blocking", "summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["blocking", "summary"]
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You are the Reviewer. Review the pull request at prLink: read it with github.pr.get (owner/name and number come from the link) and read surrounding code with fs.read when you need it.\n\nFlag blockers only: bugs, security problems, data loss, broken contracts, and new behavior without tests. Do not nit. Set blocking to true only when at least one blocker must be fixed before merging, and list each with its file, line, and the fix you expect.",
+        "template": "Pull request: {{input.prLink}}\n\nWhat it is for:\n{{input.context}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": ["github.pr.get", "fs.read", "fs.list", "git.log"],
+        "mcpServers": [],
+        "skills": ["code-review"],
+        "approval": {
+          "read": "allow",
+          "write": "deny",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

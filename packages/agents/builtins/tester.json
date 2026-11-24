@@ -1,0 +1,71 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "tester",
+    "name": "Tester",
+    "description": "Designs the test cases a change needs, as a table.",
+    "color": "amber",
+    "icon": "flask-conical",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "change": {
+            "x-ui-type": "long",
+            "description": "The change or feature to test",
+            "type": "string"
+          },
+          "repoPath": {
+            "x-ui-type": "text",
+            "description": "Absolute path of the repository, to read existing tests",
+            "type": "string"
+          }
+        },
+        "required": ["change"],
+        "additionalProperties": false,
+        "x-ui-order": ["change", "repoPath"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "tests": {
+            "x-ui-type": "json",
+            "description": "Test cases: [{ name, type, steps, expected }]"
+          },
+          "notes": {
+            "x-ui-type": "long",
+            "description": "Gaps and what can't be tested automatically",
+            "type": "string"
+          }
+        },
+        "required": ["tests"],
+        "additionalProperties": false,
+        "x-ui-order": ["tests", "notes"]
+      },
+      "outputFormat": "table",
+      "prompt": {
+        "system": "You are a test engineer. List the test cases that prove the change works and guard against regressions: happy paths, edge cases, and failure modes. Prefer fast unit tests; add integration or end-to-end cases only where they add confidence.",
+        "template": "Change:\n{{input.change}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": []
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{"type":"step_start","timestamp":1,"sessionID":"ses_1","part":{"type":"step-start"}}
+{"type":"reasoning","part":{"type":"reasoning","text":"Look around first."}}
+{"type":"tool_use","part":{"type":"tool","callID":"c1","tool":"bash","state":{"status":"completed","input":{"command":"ls"},"output":"README.md"}}}
+{"type":"tool_use","part":{"type":"tool","callID":"c2","tool":"read","state":{"status":"error","input":{"path":"x"},"error":"missing"}}}
+{"type":"tool_use","part":{"type":"tool","callID":"c3","tool":"edit","state":{"status":"running"}}}
+{"type":"step_finish","part":{"type":"step-finish","reason":"tool-calls","cost":0.001,"tokens":{"input":100,"output":10,"reasoning":5,"cache":{"read":50,"write":0}}}}
+{"type":"text","part":{"type":"text","text":"All good."}}
+{"type":"step_finish","part":{"type":"step-finish","reason":"stop","cost":0.002,"tokens":{"input":200,"output":20,"reasoning":0,"cache":{"read":0,"write":10}}}}

@@ -1,0 +1,30 @@
+{
+  "name": "@agentic/cli",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "agentic: the command line for Agentic Hub",
+  "bin": {
+    "agentic": "bin/agentic.mjs"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "start": "node bin/agentic.mjs",
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "dependencies": {
+    "@agentic/client": "workspace:*",
+    "@agentic/contracts": "workspace:*",
+    "@agentic/core": "workspace:*",
+    "tsx": "4.23.15",
+    "zod": "4.6.6"
+  },
+  "devDependencies": {
+    "@agentic/config": "workspace:*",
+    "@agentic/testing": "workspace:*",
+    "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
+    "typescript": "6.0.3"
+  }
+}

@@ -1,0 +1,15 @@
+/* Status colors: solid / tint / ink. Always paired with an icon and a label. */
+:root {
+  --success: #3f8a57;
+  --success-tint: #ddeedf;
+  --success-ink: #24573a;
+  --warning: #a8741a;
+  --warning-tint: #f6ebcf;
+  --warning-ink: #6e4a0e;
+  --danger: #b3402f;
+  --danger-tint: #f6deda;
+  --danger-ink: #8e2f22;
+  --info: #3d78b8;
+  --info-tint: #dce7f4;
+  --info-ink: #234c7a;
+}

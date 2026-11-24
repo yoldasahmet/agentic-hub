@@ -1,0 +1,205 @@
+{
+  "format": "agentic.workflow",
+  "formatVersion": 1,
+  "workflow": {
+    "slug": "issue-triage",
+    "name": "Issue triage",
+    "description": "Triage an issue, confirm the call, and plan the work right away when it is urgent.",
+    "color": "amber",
+    "icon": "list-checks",
+    "document": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "text",
+            "description": "The issue title",
+            "type": "string"
+          },
+          "description": {
+            "x-ui-type": "long",
+            "description": "The issue body",
+            "type": "string"
+          }
+        },
+        "required": ["summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "description"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "issueType": {
+            "x-ui-type": "text",
+            "description": "Bug, Story, Task, or Spike",
+            "type": "string"
+          },
+          "priority": {
+            "x-ui-type": "text",
+            "description": "Priority",
+            "type": "string"
+          },
+          "plan": {
+            "x-ui-type": "json",
+            "description": "A plan, for urgent issues"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "x-ui-order": ["issueType", "priority", "plan"]
+      },
+      "outputs": {
+        "issueType": {
+          "kind": "node",
+          "node": "confirm",
+          "field": "issueType"
+        },
+        "priority": {
+          "kind": "node",
+          "node": "confirm",
+          "field": "priority"
+        },
+        "plan": {
+          "kind": "node",
+          "node": "plan",
+          "field": "steps",
+          "fallback": {
+            "kind": "literal",
+            "value": null
+          }
+        }
+      },
+      "nodes": [
+        {
+          "id": "triage",
+          "kind": "agent",
+          "agent": "jira-triager",
+          "label": "Triage",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "summary": {
+              "kind": "input",
+              "field": "summary"
+            },
+            "description": {
+              "kind": "input",
+              "field": "description"
+            }
+          }
+        },
+        {
+          "id": "confirm",
+          "kind": "gate",
+          "label": "Confirm triage",
+          "title": "Confirm the triage",
+          "message": "{{input.rationale}}",
+          "onReject": "stop",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "issueType": {
+                "x-ui-type": "select",
+                "description": "The kind of work",
+                "type": "string",
+                "enum": ["Bug", "Story", "Task", "Spike"]
+              },
+              "priority": {
+                "x-ui-type": "select",
+                "description": "How urgent",
+                "type": "string",
+                "enum": ["Lowest", "Low", "Medium", "High", "Highest"]
+              },
+              "labels": {
+                "x-ui-type": "multi",
+                "description": "Labels",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rationale": {
+                "x-ui-type": "long",
+                "description": "Why",
+                "type": "string"
+              }
+            },
+            "required": ["issueType", "priority"],
+            "additionalProperties": false,
+            "x-ui-order": ["issueType", "priority", "labels", "rationale"]
+          },
+          "bindings": {
+            "issueType": {
+              "kind": "node",
+              "node": "triage",
+              "field": "issueType"
+            },
+            "priority": {
+              "kind": "node",
+              "node": "triage",
+              "field": "priority"
+            },
+            "labels": {
+              "kind": "node",
+              "node": "triage",
+              "field": "labels"
+            },
+            "rationale": {
+              "kind": "node",
+              "node": "triage",
+              "field": "rationale"
+            }
+          }
+        },
+        {
+          "id": "plan",
+          "kind": "agent",
+          "agent": "planner",
+          "label": "Plan urgent work",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "task": {
+              "kind": "input",
+              "field": "summary"
+            },
+            "context": {
+              "kind": "input",
+              "field": "description"
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "triage",
+          "to": "confirm",
+          "label": ""
+        },
+        {
+          "id": "e2",
+          "from": "confirm",
+          "to": "plan",
+          "label": "urgent",
+          "condition": {
+            "in": [
+              {
+                "var": "nodes.confirm.output.priority"
+              },
+              ["High", "Highest"]
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

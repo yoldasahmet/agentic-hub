@@ -1,0 +1,169 @@
+{
+  "format": "agentic.workflow",
+  "formatVersion": 1,
+  "workflow": {
+    "slug": "pr-review",
+    "name": "PR review",
+    "description": "Summarize and review a diff in parallel, then approve the review before it is posted.",
+    "color": "teal",
+    "icon": "git-pull-request",
+    "document": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "x-ui-type": "text",
+            "description": "The PR title",
+            "type": "string"
+          },
+          "diff": {
+            "x-ui-type": "long",
+            "description": "The unified diff",
+            "type": "string"
+          }
+        },
+        "required": ["diff"],
+        "additionalProperties": false,
+        "x-ui-order": ["title", "diff"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "long",
+            "description": "PR summary",
+            "type": "string"
+          },
+          "verdict": {
+            "x-ui-type": "text",
+            "description": "Review verdict",
+            "type": "string"
+          },
+          "review": {
+            "x-ui-type": "long",
+            "description": "The review",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "verdict", "review"]
+      },
+      "outputs": {
+        "summary": {
+          "kind": "node",
+          "node": "summarize",
+          "field": "text"
+        },
+        "verdict": {
+          "kind": "node",
+          "node": "approve",
+          "field": "verdict"
+        },
+        "review": {
+          "kind": "node",
+          "node": "approve",
+          "field": "review"
+        }
+      },
+      "nodes": [
+        {
+          "id": "summarize",
+          "kind": "agent",
+          "agent": "pr-summarizer",
+          "label": "Summarize",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "title": {
+              "kind": "input",
+              "field": "title"
+            },
+            "diff": {
+              "kind": "input",
+              "field": "diff"
+            }
+          }
+        },
+        {
+          "id": "review",
+          "kind": "agent",
+          "agent": "reviewer",
+          "label": "Review",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "bindings": {
+            "diff": {
+              "kind": "input",
+              "field": "diff"
+            },
+            "context": {
+              "kind": "input",
+              "field": "title"
+            }
+          }
+        },
+        {
+          "id": "approve",
+          "kind": "gate",
+          "label": "Approve review",
+          "title": "Post this review?",
+          "message": "Verdict: {{input.verdict}}",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "verdict": {
+                "x-ui-type": "select",
+                "description": "The overall call",
+                "type": "string",
+                "enum": ["approve", "request_changes", "comment"]
+              },
+              "review": {
+                "x-ui-type": "long",
+                "description": "The review text",
+                "type": "string"
+              }
+            },
+            "required": ["verdict", "review"],
+            "additionalProperties": false,
+            "x-ui-order": ["verdict", "review"]
+          },
+          "bindings": {
+            "verdict": {
+              "kind": "node",
+              "node": "review",
+              "field": "verdict"
+            },
+            "review": {
+              "kind": "node",
+              "node": "review",
+              "field": "summary"
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "summarize",
+          "to": "approve",
+          "label": ""
+        },
+        {
+          "id": "e2",
+          "from": "review",
+          "to": "approve",
+          "label": ""
+        }
+      ]
+    }
+  }
+}

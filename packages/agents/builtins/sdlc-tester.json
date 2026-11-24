@@ -1,0 +1,93 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "sdlc-tester",
+    "name": "SDLC Tester",
+    "description": "Adds end-to-end tests for the pull request, runs them, and pushes the tests to its branch. Asks before running commands.",
+    "color": "amber",
+    "icon": "flask-conical",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prLink": {
+            "x-ui-type": "text",
+            "description": "The pull request URL",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "GitHub repo (owner/name) or a local repo path",
+            "type": "string"
+          }
+        },
+        "required": ["prLink", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["prLink", "repo"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "passed": {
+            "x-ui-type": "bool",
+            "description": "True when every test passed",
+            "type": "boolean"
+          },
+          "summary": {
+            "x-ui-type": "long",
+            "description": "What was tested, and each failure with its output",
+            "type": "string"
+          },
+          "commit": {
+            "x-ui-type": "text",
+            "description": "The commit with the new tests; empty when none",
+            "type": "string"
+          }
+        },
+        "required": ["passed", "summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["passed", "summary", "commit"]
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You are the Tester. You add and run end-to-end tests for the pull request. The run's worktree is already on the pull request's branch; never write outside it.\n\n1. Read the change with github.pr.get and the code with fs.read.\n2. Add or update tests in ./e2e/ at the repository root, with the project's existing test framework and conventions.\n3. Run the relevant tests with shell.run and capture pass/fail.\n4. Commit the new or updated test files with git.commit (for example \"test: add e2e coverage\") and push them with github.push.\n\nSet passed to false when any test fails, and put the failing tests and their output in summary so the Coder can fix them.",
+        "template": "Pull request: {{input.prLink}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 1800000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [
+          "github.pr.get",
+          "fs.read",
+          "fs.list",
+          "fs.write",
+          "git.status",
+          "git.diff",
+          "git.commit",
+          "github.push",
+          "shell.run"
+        ],
+        "mcpServers": [],
+        "skills": ["test-runner", "e2e-testing"],
+        "approval": {
+          "read": "allow",
+          "write": "ask",
+          "dangerous": "ask"
+        }
+      }
+    }
+  }
+}

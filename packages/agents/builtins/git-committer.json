@@ -1,0 +1,70 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "git-committer",
+    "name": "Git Committer",
+    "description": "Commits every change in the run's worktree of the repo with the given message.",
+    "color": "slate",
+    "icon": "git-commit",
+    "spec": {
+      "kind": "tool",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-ui-type": "long",
+            "description": "The commit message",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "owner/name on GitHub, or a local repo path",
+            "type": "string"
+          }
+        },
+        "required": ["message", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["message", "repo"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "commit": {
+            "x-ui-type": "text",
+            "description": "The new commit's short hash",
+            "type": "string"
+          }
+        },
+        "required": ["commit"],
+        "additionalProperties": false,
+        "x-ui-order": ["commit"]
+      },
+      "outputFormat": "json",
+      "prompt": {
+        "system": "",
+        "template": ""
+      },
+      "runtime": {
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 120000,
+        "maxRepairs": 2,
+        "tool": "git.commit"
+      },
+      "capabilities": {
+        "tools": ["git.commit"],
+        "mcpServers": [],
+        "skills": [],
+        "approval": {
+          "read": "allow",
+          "write": "allow",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

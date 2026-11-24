@@ -1,0 +1,23 @@
+/* Claude-light neutrals, accent, and shape (docs/design-system.md). */
+:root {
+  --canvas: #efede4;
+  --sidebar: #e7e4d9;
+  --surface: #faf9f5;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e9e6db;
+  --border: #dad6c9;
+  --border-input: #928c7c;
+  --text: #1f1e1b;
+  --text-muted: #5e5a50;
+  --text-subtle: #858071;
+  --on-solid: #ffffff;
+
+  --accent: #c96442;
+  --primary: #b4553a;
+  --primary-hover: #9e4a32;
+  --accent-tint: #f6e4db;
+  --accent-ink: #8a3b22;
+
+  --shadow-1: 0 1px 2px rgb(31 30 27 / 0.06), 0 1px 1px rgb(31 30 27 / 0.04);
+  --shadow-2: 0 8px 24px rgb(31 30 27 / 0.12);
+}

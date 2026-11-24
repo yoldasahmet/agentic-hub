@@ -1,0 +1,77 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "coder",
+    "name": "Coder",
+    "description": "Implements a task or plan in a repository and returns the change as a unified diff.",
+    "color": "teal",
+    "icon": "code",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "x-ui-type": "long",
+            "description": "The change to make",
+            "type": "string"
+          },
+          "plan": {
+            "x-ui-type": "json",
+            "description": "A plan from the Planner, used first when present"
+          },
+          "repoPath": {
+            "x-ui-type": "text",
+            "description": "Absolute path of the repository to work in",
+            "type": "string"
+          }
+        },
+        "required": ["task", "repoPath"],
+        "additionalProperties": false,
+        "x-ui-order": ["task", "plan", "repoPath"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "x-ui-type": "long",
+            "description": "What changed and why",
+            "type": "string"
+          },
+          "diff": {
+            "x-ui-type": "long",
+            "description": "The full change as a unified diff",
+            "type": "string"
+          }
+        },
+        "required": ["summary", "diff"],
+        "additionalProperties": false,
+        "x-ui-order": ["summary", "diff"]
+      },
+      "outputFormat": "diff",
+      "prompt": {
+        "system": "You are a careful software engineer. Read the repository, then make the smallest correct change for the task. Follow the plan when one is given. Do not widen the scope. Report the change as a unified diff against the current files; side effects such as commits or pull requests happen through tools, not here.",
+        "template": "Task:\n{{input.task}}\n\nPlan:\n{{input.plan}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "input",
+          "field": "repoPath"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": []
+      }
+    }
+  }
+}

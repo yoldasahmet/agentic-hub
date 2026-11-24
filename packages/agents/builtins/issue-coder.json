@@ -1,0 +1,78 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "issue-coder",
+    "name": "Issue Coder",
+    "description": "Implements a GitHub issue in the run's own worktree of the repo and proposes a pull request title and summary.",
+    "color": "teal",
+    "icon": "code",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "issue": {
+            "x-ui-type": "long",
+            "description": "The issue to resolve (title, link, body)",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "owner/name on GitHub, or a local repo path",
+            "type": "string"
+          }
+        },
+        "required": ["issue", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["issue", "repo"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "x-ui-type": "text",
+            "description": "A pull request title",
+            "type": "string"
+          },
+          "summary": {
+            "x-ui-type": "long",
+            "description": "What changed and why, for the pull request body",
+            "type": "string"
+          }
+        },
+        "required": ["title", "summary"],
+        "additionalProperties": false,
+        "x-ui-order": ["title", "summary"]
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You are a careful software engineer working in a git worktree made for this task. Read the code with the fs and git tools, then make the smallest correct change for the issue by writing files with fs.write. Do not commit or push; the workflow does that after you. When done, check your change with git.diff and answer with a short pull request title and a summary of what changed and why.",
+        "template": "Resolve this issue:\n\n{{input.issue}}"
+      },
+      "runtime": {
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 900000,
+        "maxRepairs": 2,
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        }
+      },
+      "capabilities": {
+        "tools": ["fs.read", "fs.list", "fs.write", "git.status", "git.diff", "git.log"],
+        "mcpServers": [],
+        "skills": [],
+        "approval": {
+          "read": "allow",
+          "write": "allow",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

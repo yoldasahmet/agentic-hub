@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>Agentic Hub</title>
+  <!-- Source of icon.png (P18.1). macOS icon grid: an 824px tile centered on a 1024px canvas. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d4744f"/>
+      <stop offset="1" stop-color="#b5543a"/>
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)"/>
+  <g stroke="#faf6f2" stroke-width="44" stroke-linecap="round" fill="none">
+    <path d="M372 404 L512 620"/>
+    <path d="M652 404 L512 620"/>
+    <path d="M372 404 L652 404"/>
+  </g>
+  <g fill="#faf6f2">
+    <circle cx="372" cy="404" r="78"/>
+    <circle cx="652" cy="404" r="78"/>
+    <circle cx="512" cy="640" r="96"/>
+  </g>
+  <circle cx="512" cy="640" r="40" fill="#b5543a"/>
+</svg>

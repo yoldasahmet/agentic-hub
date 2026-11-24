@@ -1,0 +1,81 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "sdlc-planner",
+    "name": "SDLC Planner",
+    "description": "Reads the repo and decomposes a task into a spec and an ordered step plan.",
+    "color": "green",
+    "icon": "brain",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "x-ui-type": "long",
+            "description": "What to build or fix",
+            "type": "string"
+          },
+          "repo": {
+            "x-ui-type": "text",
+            "description": "GitHub repo (owner/name) or a local repo path",
+            "type": "string"
+          },
+          "context": {
+            "x-ui-type": "long",
+            "description": "Background: links, constraints, related code",
+            "type": "string"
+          }
+        },
+        "required": ["task", "repo"],
+        "additionalProperties": false,
+        "x-ui-order": ["task", "repo", "context"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "x-ui-type": "json",
+            "description": "What to build: { goal, scope, outOfScope, acceptanceCriteria, openQuestions }"
+          },
+          "tasks": {
+            "x-ui-type": "json",
+            "description": "Ordered steps: [{ title, detail, successCriteria }]"
+          }
+        },
+        "required": ["spec", "tasks"],
+        "additionalProperties": false,
+        "x-ui-order": ["spec", "tasks"]
+      },
+      "outputFormat": "plan",
+      "prompt": {
+        "system": "You are the Planner. Decompose the task into a spec and a deterministic, ordered step plan for a coding agent.\n\nRead the repository first with fs.list, fs.read, and git.log, so steps name real files, functions, and tests. Each step is one focused change with an explicit success criterion. Surface ambiguity as open questions in the spec instead of guessing.",
+        "template": "Task:\n{{input.task}}\n\nRepository: {{input.repo}}\n\nContext:\n{{input.context}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "worktree",
+          "field": "repo"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": ["fs.read", "fs.list", "git.log"],
+        "mcpServers": [],
+        "skills": ["spec-writing"],
+        "approval": {
+          "read": "allow",
+          "write": "deny",
+          "dangerous": "deny"
+        }
+      }
+    }
+  }
+}

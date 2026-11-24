@@ -1,0 +1,61 @@
+{
+  "format": "agentic.agent",
+  "formatVersion": 1,
+  "agent": {
+    "slug": "pr-summarizer",
+    "name": "PR Summarizer",
+    "description": "Writes a clear pull request description from a diff.",
+    "color": "violet",
+    "icon": "git-pull-request",
+    "spec": {
+      "kind": "llm",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "x-ui-type": "text",
+            "description": "The PR title, if there is one",
+            "type": "string"
+          },
+          "diff": {
+            "x-ui-type": "long",
+            "description": "The unified diff",
+            "type": "string"
+          }
+        },
+        "required": ["diff"],
+        "additionalProperties": false,
+        "x-ui-order": ["title", "diff"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false,
+        "x-ui-order": []
+      },
+      "outputFormat": "markdown",
+      "prompt": {
+        "system": "You write pull request descriptions. Start with one sentence on what the change does and why, then list the notable changes, then how it was tested. Use markdown. Be concise.",
+        "template": "Title: {{input.title}}\n\n{{input.diff}}"
+      },
+      "runtime": {
+        "model": {
+          "providerId": "claude-code",
+          "model": "default"
+        },
+        "fallbacks": [],
+        "workingDir": {
+          "mode": "scratch"
+        },
+        "timeoutMs": 600000,
+        "maxRepairs": 2
+      },
+      "capabilities": {
+        "tools": [],
+        "mcpServers": [],
+        "skills": []
+      }
+    }
+  }
+}

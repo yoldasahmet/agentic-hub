@@ -1,0 +1,39 @@
+# Dependencies and build output
+node_modules/
+dist/
+out/
+release/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# Test reports
+test-results/
+playwright-report/
+blob-report/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Environment files (keep the examples)
+.env
+.env.*
+!.env.example
+
+# Per-user agent settings, provider credentials and macOS signing material
+.claude/settings.local.json
+*.local.json
+*.p8
+*.p12
+*.key
+*.pem
+*.provisionprofile
+vault.json
