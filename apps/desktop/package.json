@@ -16,10 +16,10 @@
     "package": "pnpm --filter @agentic/cli bundle && electron-vite build && electron-builder"
   },
   "dependencies": {
-    "electron-updater": "6.8.10",
+    "electron-updater": "6.8.11",
     "node-pty": "1.1.0",
-    "ws": "8.22.0",
-    "zod": "4.6.6"
+    "ws": "8.23.0",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@agentic/client": "workspace:*",
@@ -32,10 +32,10 @@
     "@agentic/ui": "workspace:*",
     "@electron/asar": "3.4.1",
     "@electron/fuses": "1.8.0",
-    "@playwright/test": "1.63.0",
-    "@tailwindcss/vite": "4.3.3",
-    "@tanstack/react-query": "5.104.1",
-    "@tanstack/react-router": "1.170.42",
+    "@playwright/test": "1.65.1",
+    "@tailwindcss/vite": "4.3.5",
+    "@tanstack/react-query": "5.107.1",
+    "@tanstack/react-router": "1.170.46",
     "@testing-library/react": "16.3.3",
     "@types/node": "22.20.5",
     "@types/react": "19.3.0",
@@ -43,15 +43,15 @@
     "@vitejs/plugin-react": "5.2.0",
     "@xterm/addon-fit": "0.11.0",
     "@xterm/xterm": "6.0.0",
-    "electron": "44.7.0",
-    "electron-builder": "26.17.0",
+    "electron": "44.11.3",
+    "electron-builder": "26.18.0",
     "electron-vite": "5.0.0",
-    "lucide-react": "1.55.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "tailwindcss": "4.3.3",
+    "lucide-react": "1.73.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwindcss": "4.3.5",
     "typescript": "6.0.3",
     "vite": "7.3.7",
-    "zustand": "5.0.15"
+    "zustand": "5.1.0"
   }
 }

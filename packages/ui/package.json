@@ -12,23 +12,23 @@
   },
   "dependencies": {
     "@agentic/contracts": "workspace:*",
-    "@dagrejs/dagre": "3.1.1",
+    "@dagrejs/dagre": "3.1.3",
     "@fontsource-variable/inter": "5.3.0",
     "@fontsource-variable/jetbrains-mono": "5.3.0",
-    "@fontsource-variable/source-serif-4": "5.3.0",
-    "@tanstack/react-virtual": "3.14.11",
+    "@fontsource-variable/source-serif-4": "5.3.1",
+    "@tanstack/react-virtual": "3.14.26",
     "@xyflow/react": "12.12.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
-    "lucide-react": "1.55.0",
-    "radix-ui": "1.7.0",
+    "lucide-react": "1.73.0",
+    "radix-ui": "1.8.1",
     "react-markdown": "10.1.0",
-    "react-resizable-panels": "4.13.3",
+    "react-resizable-panels": "4.24.0",
     "remark-gfm": "4.0.1",
     "sonner": "2.0.8",
     "tailwind-merge": "3.7.0",
-    "zod": "4.6.6"
+    "zod": "4.6.7"
   },
   "peerDependencies": {
     "react": "^19.3.0",
@@ -38,12 +38,12 @@
     "@agentic/config": "workspace:*",
     "@testing-library/dom": "10.4.2",
     "@testing-library/react": "16.3.3",
-    "@testing-library/user-event": "14.6.7",
+    "@testing-library/user-event": "14.6.12",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "typescript": "6.0.3",
-    "vitest": "5.0.3"
+    "vitest": "5.1.0"
   }
 }
